@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+{% block contenttitle %}
+{% endblock %}
+{% load staticfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="paint blog, free templates, website templates, CSS, HTML" />
+<meta name="description" content="Paint Blog - free blog website template provided by templatemo.com" />
+<link href="{{ STATIC_URL }}templatemo_style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    function changeHashOnLoad() {
+        window.location.href += "#";
+        setTimeout(changeHashAgain, 10);
+    }
+
+    function changeHashAgain() 
+    {          
+        window.location.href += "1";
+    }
+
+    var storedHash = window.location.hash;
+    window.setInterval(function () {
+        if (window.location.hash != storedHash) {
+            window.location.hash = storedHash;
+        }
+    }, 10);
+</script>
+<!--  Free CSS Template is designed by templatemo.com  -->
+<!--[if lt IE 7]>
+<style type="text/css">
+
+  .date_section, .comment{ behavior: url(iepngfix.htc); }
+
+</style>
+<![endif]-->
+</head>
+<body onload="changeHashOnLoad()">
+<div id="templatemo_top_panel">
+	<div id="templatemo_header_section">
+    	<div id="search_box">
+            <form method="get" action="#">
+                <input type="text" name="searchfield" id="search_field" title="searchfield" />
+                <input type="submit" name="search" value="" alt="Search" id="search_button" title="Search" />
+            </form>
+        </div>
+    </div> <!-- end of header -->
+</div>    
+    
+<div id="templatemo_menu_panel">
+    <div id="templatemo_menu_section">
+        <ul>
+            <li><a href="home" class="current">Home</a></li>             
+        </ul> 
+    </div>
+</div> <!-- end of menu -->
+
+<div id="templatemo_content_panel">
+	<div id="templatemo_content">
+    	
+        <div id="templatemo_content_left">
+        	<div class="templatemo_content_left_section">
+            	<div class="left_section_title">Recent Blogs</div>
+                <div class="left_section_content">
+                	<ul>
+                       {% block content1 %}
+                       {% endblock %}
+                    </ul>
+                </div>
+            </div>
+            
+            
+         </div> <!-- end of content left -->
+         
+         <div id="templatemo_content_right">
+        	{% block content %}
+                       
+    </div>
+    {% endblock %}
+<div align="center"><p>Contact:<a href="mailto:ashifkalladi@gmail.com">
+  		ashifkalladi@gmail.com</a></p>
+	</div>	</body>
+</html>
+</div> <!-- end of bottom panel -->
+</div> <!-- end of content panel -->
+
+
+<!--  Free CSS Template is designed by templatemo.com  -->
+

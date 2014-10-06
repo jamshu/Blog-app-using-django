@@ -1,0 +1,71 @@
+{% extends "index.html" %}
+{% block contenttitle %}
+{% if title %}
+        <title>{{title}}</title>
+        {% else %}
+        <title>My Blog</title>
+{% endif %}
+{% endblock %}
+{% block content1 %}
+{% for post in outline %}
+<li align="left"><form align="left" id="myform1" method="post" action="post/">
+            {% csrf_token %}   
+             <p align="right"><input type="hidden" name="post_id" value="{{post}}" />
+              <input type="submit" style="background: transparent;text-decoration: underline;cursor: pointer;font-size: 12px;width:230px;rows=5;color: #f4d153;border: 0;text-align:left;" name="post" value="{{post.title}}" /></p>   
+            </form></li>
+{% endfor %}                    
+{% endblock %}
+
+{% block content %}
+{% for post in posts %}
+
+<div class="templatemo_post_section">
+                <div class="date_section">
+                	{{post.day}}<span>{{post.month}}</span>                   
+                </div>
+            	<div class="post_content">                	
+                    <div class="post_title">
+                    	<h1>{{post.title}}</h1>
+                        
+                    </div>
+                    
+                    <div class="post_body">
+                        {{post.body|safe}}
+                  </div>                    
+                </div>
+            </div> <!-- end of 1 post -->
+            {% if title %}
+
+             <p><h3>Comments</h3></p>
+{% if comments %}
+            {% for comment in comments %}
+                {% if post.title == comment.title %}
+                    <h4><strong>{{ comment.name }}</strong> says: {{ comment.comment }}</h4>
+                {% endif %}
+            {% endfor %}
+{% endif %}
+<p><h3>Add Comment</h3></p>
+<form class="form" action="/" method="post">
+          <table>
+        {{ form.as_table }}
+    </table>
+    <input type="hidden" value="{{ post.title }}" name="post_title"> 
+    {% csrf_token %}
+    <input name="{{post.id}}" type="submit" value="Post">
+</form>
+</div>
+           {% else %}
+              <form id="myform" method="post" action="post/">
+            {% csrf_token %}
+  	    <p align="right"><input type="hidden" name="post_id" value="{{post.title}}" />
+              <input type="submit" name="post" value="Read More....." /></p> 
+  	                 
+            </form>
+           {% endif %}            
+
+</div>           
+            
+{% endfor %}
+{% endblock %}
+
+

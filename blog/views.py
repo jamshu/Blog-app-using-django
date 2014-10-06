@@ -1,0 +1,104 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from forms import CommentForm
+from models import Newblogposts, Comments
+from datetime import datetime
+import feedparser
+import re
+
+def get_archieves():
+    archieves = []
+    blog_posts = Newblogposts.objects.all()
+    for blog in blog_posts:
+       archieves.append(blog.title)
+    return archieves
+
+def single_post(request):
+    if request.method == 'POST':
+       comments = Comments.objects.order_by("-id")
+       title=request.POST['post_id']
+       archieves = get_archieves()
+       results = []
+       blog_posts = Newblogposts.objects.filter(title=title)
+       for blog in blog_posts:
+	       date = blog.day[:10]
+	       day = date[8:10]
+               body = blog.body
+	       month = date[5:7]
+               mnth = get_month(month)
+	       results.append({'day': day, 'month': mnth, 'body': body, 'title': blog.title})
+    return render(request, 'home.html', {'posts': results, 'outline': archieves,  'comments': comments, 'form':CommentForm, 'title':title })
+
+def home(request):
+    blog_posts = load_blog()
+    results = []
+    archieves = []
+    for blog in blog_posts:
+       body = blog.body
+       new_list = [m.start() for m in re.finditer(r"<br />",body)]
+       new_line = body.index('<br />')
+       for item in new_list:
+               if item >= 750:
+                  new_line = item
+                  break;
+       body = body[:new_line]
+       pre_start_list = [m.start() for m in re.finditer(r"<pre ",body)]
+       pre_end_list = [m.start() for m in re.finditer(r"</pre>",body)]
+       if pre_start_list:
+            if not pre_end_list:
+              pre_end = [m.start() for m in re.finditer(r"</pre>",blog.body)][0]
+              body =  blog.body[:pre_end]
+       archieves.append(blog.title)
+       date = blog.day[:10]
+       day = date[8:10]
+       month = date[5:7]
+       mnth = get_month(month)
+       results.append({'day': day, 'month': mnth, 'body': body, 'title': blog.title})
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+           data = form.cleaned_data
+           p = Comments(name=data['name'], comment=data['comment'], title=request.POST['post_title'])
+           p.save()
+    comments = Comments.objects.order_by("-id")
+    return render(request, 'home.html', {'posts': results, 'outline': archieves,  'comments': comments, 'form':CommentForm})
+
+
+def load_blog():
+    posts = Newblogposts.objects.all()
+    name_list = []
+    for post in posts:
+       name_list.append(post.title)
+    blog = feedparser.parse("https://ashifkalladi.blogspot.com/feeds/posts/default")
+    for entry in blog.entries:
+         if not entry['title'] in name_list:
+		 p = Newblogposts(title=entry['title'], body=entry['summary'], day=entry['updated'])
+		 p.save()
+    return Newblogposts.objects.order_by("id")
+        
+def get_month(month):
+    if month == '01':
+	  mnth = 'Jan'
+    elif month == '02':
+	  mnth = 'Feb'
+    elif month == '03':
+	  mnth = 'Mar'
+    elif month == '04':
+	  mnth = 'Apr'
+    elif month == '05':
+	  mnth = 'May'
+    elif month == '06':
+	  mnth = 'June'
+    elif month == '07':
+	  mnth = 'July'
+    elif month == '08':
+	  mnth = 'Aug'
+    elif month == '09':
+	  mnth = 'Sep'
+    elif month == '10':
+	  mnth = 'Oct'
+    elif month == '11':
+	  mnth = 'Nov'
+    elif month == '12':
+	  mnth = 'Dec'
+    return mnth
